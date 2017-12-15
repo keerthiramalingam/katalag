@@ -87,9 +87,6 @@
             "name": "[variables('loadBalancerName')]",
             "location": "[resourceGroup().location]",
             "apiVersion": "2017-04-01",
-            "dependsOn": [
-              "[concat('Microsoft.Network/virtualNetworks/', variables('virtualNetworkName'))]"
-            ],
             "properties": {
               "frontendIPConfigurations": [
                 {
