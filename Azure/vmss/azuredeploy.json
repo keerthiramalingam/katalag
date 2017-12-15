@@ -145,8 +145,8 @@
               "imageReference": {
                 "publisher": "MicrosoftWindowsServer",
                 "offer": "WindowsServer",
-                "sku": "2012-R2-Datacenter",
-                "version": "latest"
+                "sku": "2012-Datacenter",
+                "version": "3.127.20170420"
               }
             },
             "osProfile": {
