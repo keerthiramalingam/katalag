@@ -11,6 +11,7 @@
       },
       "vmssName": {
         "type": "string",
+        "defaultValue": "keerthi-vmss",
         "metadata": {
           "description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
         },
@@ -26,30 +27,35 @@
       },
       "adminUsername": {
         "type": "string",
+        "defaultValue": "kitadmin",
         "metadata": {
           "description": "Admin username on all VMs."
         }
       },
       "adminPassword": {
         "type": "securestring",
+        "defaultValue": "Welcome12345",
         "metadata": {
           "description": "Admin password on all VMs."
         }
       },
       "existingVnetResourceGroupName": {
         "type": "string",
+        "defaultValue": "vmss-keerthi",
         "metadata": {
           "description": "Name of the resourceGroup for the existing virtual network to deploy the scale set into."
         }
       },
       "existingVnetName": {
         "type": "string",
+        "defaultValue": "keerthivnet",
         "metadata": {
           "description": "vName of the existing virtual network to deploy the scale set into."
         }
       },
       "existingSubnetName": {
         "type": "string",
+        "defaultValue": "keerthisubnet",
         "metadata": {
           "description": "Name of the existing subnet to deploy the scale set into."
         }
