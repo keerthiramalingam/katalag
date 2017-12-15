@@ -132,7 +132,7 @@
           "capacity": "[parameters('instanceCount')]"
         },
         "properties": {
-          "overprovision": "true",
+          "overprovision": true,
           "upgradePolicy": {
             "mode": "Manual"
           },
@@ -182,32 +182,7 @@
                   }
                 }
               ]
-            },
-            "extensionProfile": {
-                "extensions": [
-                  {
-                    "name": "Microsoft.Powershell.DSC",
-                    "properties": {
-                      "publisher": "Microsoft.Powershell",
-                      "type": "DSC",
-                      "typeHandlerVersion": "2.9",
-                      "autoUpgradeMinorVersion": true,
-                      "forceUpdateTag": "[parameters('powershelldscUpdateTagVersion')]",
-                      "settings": {
-                        "configuration": {
-                          "url": "[variables('powershelldscZipFullPath')]",
-                          "script": "IISInstall.ps1",
-                          "function": "InstallIIS"
-                        },
-                        "configurationArguments": {
-                          "nodeName": "localhost",
-                          "WebDeployPackagePath": "[variables('webDeployPackageFullPath')]"
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
+            }
           }
         }
       },
@@ -217,11 +192,11 @@
         "name": "cpuautoscale",
         "location": "[resourceGroup().location]",
         "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]"
+          "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]"
         ],
         "properties": {
           "name": "cpuautoscale",
-          "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]",
+          "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
           "enabled": true,
           "profiles": [
             {
@@ -236,7 +211,7 @@
                   "metricTrigger": {
                     "metricName": "Percentage CPU",
                     "metricNamespace": "",
-                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]",
+                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
                     "timeGrain": "PT1M",
                     "statistic": "Average",
                     "timeWindow": "PT5M",
@@ -255,7 +230,7 @@
                   "metricTrigger": {
                     "metricName": "Percentage CPU",
                     "metricNamespace": "",
-                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('namingInfix'))]",
+                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
                     "timeGrain": "PT1M",
                     "statistic": "Average",
                     "timeWindow": "PT5M",
