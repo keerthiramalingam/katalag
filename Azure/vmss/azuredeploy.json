@@ -11,7 +11,7 @@
       },
       "vmssName": {
         "type": "string",
-        "defaultValue": "keerthi-vmss",
+        "defaultValue": "keerthivmss",
         "metadata": {
           "description": "Globally unique dns name for the scale set. Must be 3-61 characters in length and globally unique across Azure."
         },
