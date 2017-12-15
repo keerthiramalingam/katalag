@@ -190,7 +190,7 @@
       {
         "type": "microsoft.insights/autoscalesettings",
         "apiVersion": "2015-04-01",
-        "name": "cpu-autoscale",
+        "name": "cpuautoscale",
         "location": "[resourceGroup().location]",
         "properties": {
           "name": "cpuautoscale",
