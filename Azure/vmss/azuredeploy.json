@@ -70,7 +70,7 @@
       "loadBalancerNatPoolName": "loadBalancerNatPool",
       "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",    
       "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
-      "virtualNetworkName": "existingVnetName",
+      "virtualNetworkName": "[parameters('existingVnetName')]",
       "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
       "subnetName": "[parameters('existingSubnetName')]",
       "subnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
