@@ -192,9 +192,6 @@
         "apiVersion": "2015-04-01",
         "name": "cpuautoscale",
         "location": "[resourceGroup().location]",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]"
-        ],
         "properties": {
           "name": "cpuautoscale",
           "targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
