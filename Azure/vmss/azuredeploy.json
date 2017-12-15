@@ -223,26 +223,7 @@
                     "value": "1",
                     "cooldown": "PT5M"
                   }
-                },
-                {
-                  "metricTrigger": {
-                    "metricName": "Percentage CPU",
-                    "metricNamespace": "",
-                    "metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', parameters('vmssName'))]",
-                    "timeGrain": "PT1M",
-                    "statistic": "Average",
-                    "timeWindow": "PT5M",
-                    "timeAggregation": "Average",
-                    "operator": "LessThan",
-                    "threshold": 70
-                  },
-                  "scaleAction": {
-                    "direction": "Decrease",
-                    "type": "ChangeCount",
-                    "value": "1",
-                    "cooldown": "PT5M"
-                  }
-                }
+                }              
               ]
             }
           ]
