@@ -213,14 +213,14 @@
       "metadata": {
         "description": "Linked Templates base url"
       },
-      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/tree/master/Azure/zztmpAD/nested"
+      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/zztmpAD/nested"
     },
     "scriptsBaseUrl": {
       "type": "string",
       "metadata": {
         "description": "DSC Scripts base url"
       },
-      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/tree/master/Azure/zztmpAD/scripts"
+      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/zztmpAD/scripts"
     },
     "autoPatchingDay": {
       "type": "string",
