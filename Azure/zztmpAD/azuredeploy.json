@@ -213,14 +213,14 @@
       "metadata": {
         "description": "Linked Templates base url"
       },
-      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/sql-alwayson/3NodesHigh/nested"
+      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/tree/master/Azure/zztmpAD/nested"
     },
     "scriptsBaseUrl": {
       "type": "string",
       "metadata": {
         "description": "DSC Scripts base url"
       },
-      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/sql-alwayson/3NodesHigh/scripts"
+      "defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/tree/master/Azure/zztmpAD/scripts"
     },
     "autoPatchingDay": {
       "type": "string",
@@ -496,7 +496,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
       "dependsOn": [
-        "Microsoft.Resources/deployments/LoadBalancers"
+        "Microsoft.Resources/deployments/StorageAccountVirtualNetworkPublicIP"
       ],
       "properties": {
         "mode": "Incremental",
