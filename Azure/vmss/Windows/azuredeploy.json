@@ -434,7 +434,7 @@
 											"[variables('CustomScriptLink')]"
 										]
 									},
-									"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('CustomScriptName')]"
+									"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('CustomScriptName'))]"
 								}
 							}
 						]
