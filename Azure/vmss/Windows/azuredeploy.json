@@ -265,7 +265,6 @@
 		"nicName": "vmss-nic",
 		"VmSku": "[parameters('nodeType')]",
 		"InstanceCount": "[parameters('instanceCount')]",
-		"diskId": "[resourceId('Microsoft.Compute/images', parameters('operatingSystemImageID')]",
 		"Publisher": "[parameters('operatingSystemPublisher')]",
 		"Offer": "[parameters('operatingSystemoffer')]",
 		"Sku": "[parameters('operatingSystemsku')]",
