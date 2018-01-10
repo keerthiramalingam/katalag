@@ -173,7 +173,7 @@
 
 		"existingSubnetName": {
 			"type": "string",
-			"defaultValue": "keerthisubnet",
+			"defaultValue": "default",
 			"metadata": {
 				"description": "Name of the existing subnet to deploy the scale set into."
 			}
