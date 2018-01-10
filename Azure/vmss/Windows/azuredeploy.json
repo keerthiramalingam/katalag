@@ -400,10 +400,11 @@
 										"fileUris": [
 											"[variables('BootStrapScriptLink')]"
 										],
-										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'),'')]"
+										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'))]"
 									}
 								}
-							}, {
+              }, 
+              {
 								"name": "JoinDomain",
 								"properties": {
 									"publisher": "Microsoft.Compute",
