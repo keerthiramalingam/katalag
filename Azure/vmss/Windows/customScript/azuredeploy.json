@@ -1,0 +1,504 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+
+		"subscriptionId": {
+			"type": "string",
+			"defaultValue": ""
+		},
+
+		"dnsServers": {
+			"type": "array",
+			"defaultValue": ["51.140.82.191"]
+		},
+
+		"bootstrapTemplateBaseURL": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/vmss/Windows/"
+		},
+
+		"bootstrapScriptName": {
+			"type": "string",
+			"defaultValue": "boot.ps1"
+		},
+
+		"customTemplateBaseURL": {
+			"type": "string",
+			"defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/vmss/Windows/"
+		},
+
+		"customScriptName": {
+			"type": "string",
+			"defaultValue": "custom.ps1"
+		},
+
+		"domainToJoin": {
+			"type": "string",
+			"defaultValue": "keerthi.io"
+		},
+
+		"domainJoinOptions": {
+			"type": "int",
+			"defaultValue": 3
+		},
+
+		"ouPath": {
+			"type": "string",
+			"defaultValue": "DC=kit,DC=keerthi,DC=io"
+		},
+
+		"domainUsername": {
+			"type": "string",
+			"defaultValue": "adadministrator"
+		},
+
+		"domainPassword": {
+      "type": "securestring",
+      "defaultValue": "Password123456"
+		},
+
+		"selectedRegion": {
+			"type": "string",
+			"defaultValue": "uksouth"
+		},
+
+		"selectedEnvironment": {
+			"type": "string",
+			"defaultValue": "dev-1"
+		},
+
+		"pprole": {
+			"type": "string",
+			"defaultValue": "undefined"
+		},
+
+		"operatingSystemPublisher": {
+			"type": "string",
+			"defaultValue": "MicrosoftWindowsServer",
+			"metadata": {
+				"description": "OS publisher"
+			}
+		},
+
+		"operatingSystemoffer": {
+			"type": "string",
+			"defaultValue": "WindowsServer",
+			"metadata": {
+				"description": "OS offer"
+			}
+		},
+
+		"operatingSystemsku": {
+			"type": "string",
+			"defaultValue": "2012-Datacenter",
+			"metadata": {
+				"description": "OS sku"
+			}
+		},
+
+		"operatingSystemversion": {
+			"type": "string",
+			"defaultValue": "3.127.20170420",
+			"metadata": {
+				"description": "OS version"
+			}
+		},
+
+		"operatingSystemImageID": {
+			"type": "string",
+			"defaultValue": "default id to be used",
+			"metadata": {
+				"description": "ID of precreated image ID"
+			}
+		},
+
+		"nodeType": {
+			"type": "string",
+			"defaultValue": "Standard_A1_v2",
+			"metadata": {
+				"description": "Machine size"
+			}
+		},
+
+		"vmssName": {
+			"type": "string",
+			"defaultValue": "centvmss",
+			"metadata": {
+				"description": "Name of VM scaleset"
+			},
+			"maxLength": 9
+		},
+
+		"instanceCount": {
+			"type": "int",
+			"metadata": {
+				"description": "Number of VM instances to start up with"
+			},
+			"defaultValue": 1,
+			"maxValue": 1000
+		},
+
+		"adminUsername": {
+			"type": "string",
+			"defaultValue": "centadmin",
+			"metadata": {
+				"description": "Admin username on all VMs."
+			}
+		},
+
+		"adminPassword": {
+			"type": "securestring",
+			"defaultValue": "Welcome12345",
+			"metadata": {
+				"description": "Admin password on all VMs."
+			}
+		},
+
+		"existingVnetResourceGroupName": {
+			"type": "string",
+			"defaultValue": "vmss-keerthi",
+			"metadata": {
+				"description": "Name of the resourceGroup for the existing virtual network to deploy the scale set into."
+			}
+		},
+
+		"existingVnetName": {
+			"type": "string",
+			"defaultValue": "keerthivnet",
+			"metadata": {
+				"description": "vName of the existing virtual network to deploy the scale set into."
+			}
+		},
+
+		"existingSubnetName": {
+			"type": "string",
+			"defaultValue": "default",
+			"metadata": {
+				"description": "Name of the existing subnet to deploy the scale set into."
+			}
+		},
+
+		"imageUri": {
+			"type": "string",
+			"defaultValue": "https://google.com",
+			"metadata": {
+				"description": "URL of Image to be used for provisioning"
+			}
+		},
+
+		"minimumNodes": {
+			"type": "string",
+			"defaultValue": "1",
+			"metadata": {
+				"description": "Minumum number of nodes to scaledown to "
+			}
+		},
+
+		"maximumNodes": {
+			"type": "string",
+			"defaultValue": "1000",
+			"metadata": {
+				"description": "Maximum Number of Nodes to scale up to"
+			}
+		},
+
+		"autoScalingMetric": {
+			"type": "string",
+			"defaultValue": "cpu",
+			"metadata": {
+				"description": "Auto scaling maetric to be considered for scaling. Either cpu or memory"
+			}
+		},
+
+		"scaleOutThreshold": {
+			"type": "string",
+			"defaultValue": "90",
+			"metadata": {
+				"description": "The percentage above which scaleout should happen"
+			}
+		},
+
+		"scaleOutAction": {
+			"type": "string",
+			"defaultValue": "1",
+			"metadata": {
+				"description": "Number of machines to scaleout if threshold is breached"
+			}
+		},
+
+		"scaleInThreshold": {
+			"type": "string",
+			"defaultValue": "70",
+			"metadata": {
+				"description": "The percentage below which scaleout should happen"
+			}
+		},
+
+		"scaleInAction": {
+			"type": "string",
+			"defaultValue": "1",
+			"metadata": {
+				"description": "Number of machines to ScaleIn if threshold is breached"
+			}
+		}
+	},
+	"variables": {
+		"VMScaleSetName": "[parameters('vmssName')]",
+		"publicIPAddressName": "pip",
+		"LoadBalancerName": "loadBalancer",
+		"loadBalancerFrontEndName": "loadBalancerFrontEnd",
+		"loadBalancerBackEndName": "loadBalancerBackEnd",
+		"loadBalancerProbeName": "loadBalancerHttpProbe",
+		"loadBalancerNatPoolName": "loadBalancerNatPool",
+		"lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('LoadBalancerName'))]",
+		"FrontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+		"virtualNetworkName": "[parameters('existingVnetName')]",
+		"vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('virtualNetworkName'))]",
+		"subnetName": "[parameters('existingSubnetName')]",
+		"SubnetRef": "[concat(variables('vnetID'),'/subnets/',variables('subnetName'))]",
+		"BePoolName": "bepool",
+		"NatPoolName": "natpool",
+		"NatStartPort": 50000,
+		"NatEndPort": 51000,
+		"NatBackendPort": 3389,
+		"nicName": "vmss-nic",
+		"VmSku": "[parameters('nodeType')]",
+		"InstanceCount": "[parameters('instanceCount')]",
+		"Publisher": "[parameters('operatingSystemPublisher')]",
+		"Offer": "[parameters('operatingSystemoffer')]",
+		"Sku": "[parameters('operatingSystemsku')]",
+		"Version": "[parameters('operatingSystemversion')]",
+		"AdminUsername": "[parameters('adminUsername')]",
+		"AdminPassword": "[parameters('adminPassword')]",
+		"dnsServers": "[parameters('dnsServers')]",
+
+		"BootStrapTemplateBaseURL": "[parameters('bootstrapTemplateBaseURL')]",
+		"BootStrapScriptName": "[parameters('bootstrapScriptName')]",
+		"BootStrapScriptLink": "[concat(variables('BootStrapTemplateBaseURL'), variables('BootStrapScriptName'))]",
+		"SelectedRegion": "[parameters('selectedRegion')]",
+		"SelectedEnvironment": "[parameters('selectedEnvironment')]",
+		"PProle": "[parameters('pprole')]",
+
+		"DomainToJoin": "[parameters('domainToJoin')]",
+		"DomainJoinOptions": "[parameters('domainJoinOptions')]",
+		"OuPath": "[parameters('ouPath')]",
+		"DomainUsername": "[parameters('domainUsername')]",
+		"DomainPassword": "[parameters('domainPassword')]",
+
+		"CustomTemplateBaseURL": "[parameters('customTemplateBaseURL')]",
+		"CustomScriptName": "[parameters('customScriptName')]",
+		"CustomScriptLink": "[concat(variables('customTemplateBaseURL'), variables('customScriptName'))]"
+	},
+	"resources": [{
+			"type": "Microsoft.Network/loadBalancers",
+			"name": "[variables('LoadBalancerName')]",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2017-04-01",
+			"properties": {
+				"frontendIPConfigurations": [{
+						"name": "LoadBalancerFrontEnd",
+						"properties": {
+							"subnet": {
+								"id": "[variables('SubnetRef')]"
+							}
+						}
+					}
+				],
+				"backendAddressPools": [{
+						"name": "[variables('BePoolName')]"
+					}
+				],
+				"inboundNatPools": [{
+						"name": "[variables('NatPoolName')]",
+						"properties": {
+							"frontendIPConfiguration": {
+								"id": "[variables('FrontEndIPConfigID')]"
+							},
+							"protocol": "tcp",
+							"frontendPortRangeStart": "[variables('NatStartPort')]",
+							"frontendPortRangeEnd": "[variables('NatEndPort')]",
+							"backendPort": "[variables('NatBackendPort')]"
+						}
+					}
+				]
+			}
+		}, 
+		{
+			"type": "Microsoft.Compute/virtualMachineScaleSets",
+			"name": "[variables('VMScaleSetName')]",
+			"location": "[resourceGroup().location]",
+			"apiVersion": "2017-03-30",
+			"dependsOn": [
+				"[resourceId('Microsoft.Network/loadBalancers', variables('LoadBalancerName'))]"
+			],
+			"sku": {
+				"name": "[variables('VmSku')]",
+				"capacity": "[variables('InstanceCount')]"
+			},
+			"properties": {
+				"overprovision": true,
+				"upgradePolicy": {
+					"mode": "Manual"
+				},
+				"virtualMachineProfile": {
+					"storageProfile": {
+						"osDisk": {
+							"createOption": "FromImage",
+							"caching": "ReadWrite"
+						},
+						"imageReference": {
+							"publisher": "[variables('Publisher')]",
+							"offer": "[variables('Offer')]",
+							"sku": "[variables('Sku')]",
+							"version": "[variables('Version')]"
+						}
+					},
+					"osProfile": {
+						"computerNamePrefix": "[variables('VMScaleSetName')]",
+						"adminUsername": "[variables('AdminUsername')]",
+						"adminPassword": "[variables('AdminPassword')]"
+					},
+					"networkProfile": {
+						"networkInterfaceConfigurations": [{
+								"name": "nic",
+								"properties": {
+									"primary": true,
+									"dnsSettings": {
+										"dnsServers": "[variables('DnsServers')]"
+									},
+									"ipConfigurations": [{
+											"name": "ipconfig",
+											"properties": {
+												"subnet": {
+													"id": "[variables('SubnetRef')]"
+												},
+												"loadBalancerBackendAddressPools": [{
+														"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('LoadBalancerName'), '/backendAddressPools/', variables('BePoolName'))]"
+													}
+												],
+												"loadBalancerInboundNatPools": [{
+														"id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('LoadBalancerName'), '/inboundNatPools/', variables('NatPoolName'))]"
+													}
+												]
+											}
+										}
+									]
+								}
+							}
+						]
+					},
+					"extensionProfile": {
+						"extensions": [{
+								"name": "bootstrap",
+								"properties": {
+									"publisher": "Microsoft.Azure.Extensions",
+									"type": "CustomScriptExtension",
+									"typeHandlerVersion": "2.0",
+									"autoUpgradeMinorVersion": true,
+									"settings": {
+										"fileUris": [
+											"[variables('BootStrapScriptLink')]"
+										],
+										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'))]"
+									}
+								}
+              }, 
+              {
+								"name": "JoinDomain",
+								"properties": {
+									"publisher": "Microsoft.Compute",
+									"type": "JsonADDomainExtension",
+									"typeHandlerVersion": "1.3",
+									"autoUpgradeMinorVersion": true,
+									"settings": {
+										"Name": "[variables('DomainToJoin')]",
+										"OUPath": "[variables('OuPath')]",
+										"User": "[concat(variables('DomainToJoin'),'\\',variables('DomainUsername'))]",
+										"Restart": "true",
+										"Options": "[variables('DomainJoinOptions')]"
+									},
+									"protectedsettings": {
+										"Password": "[variables('DomainPassword')]"
+									}
+								}
+							}, {
+								"name": "customScript",
+								"properties": {
+									"publisher": "Microsoft.Azure.Extensions",
+									"type": "CustomScriptExtension",
+									"typeHandlerVersion": "2.0",
+									"autoUpgradeMinorVersion": true,
+									"settings": {
+										"fileUris": [
+											"[variables('CustomScriptLink')]"
+                    ],
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('CustomScriptName'))]"
+									}									
+								}
+							}
+						]
+					}
+				}
+			}
+		}, 
+		{
+			"type": "microsoft.insights/autoscalesettings",
+			"apiVersion": "2015-04-01",
+			"name": "cpuautoscale",
+			"location": "[resourceGroup().location]",
+			"properties": {
+				"name": "cpuautoscale",
+				"targetResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('VMScaleSetName'))]",
+				"enabled": true,
+				"profiles": [{
+						"name": "CPU Profile",
+						"capacity": {
+							"minimum": "1",
+							"maximum": "1000",
+							"default": "1"
+						},
+						"rules": [{
+								"metricTrigger": {
+									"metricName": "Percentage CPU",
+									"metricNamespace": "",
+									"metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('VMScaleSetName'))]",
+									"timeGrain": "PT1M",
+									"statistic": "Average",
+									"timeWindow": "PT5M",
+									"timeAggregation": "Average",
+									"operator": "GreaterThan",
+									"threshold": "[parameters('scaleOutThreshold')]"
+								},
+								"scaleAction": {
+									"direction": "Increase",
+									"type": "ChangeCount",
+									"value": "[parameters('scaleOutAction')]",
+									"cooldown": "PT5M"
+								}
+							}, {
+								"metricTrigger": {
+									"metricName": "Percentage CPU",
+									"metricNamespace": "",
+									"metricResourceUri": "[concat('/subscriptions/',subscription().subscriptionId, '/resourceGroups/',  resourceGroup().name, '/providers/Microsoft.Compute/virtualMachineScaleSets/', variables('VMScaleSetName'))]",
+									"timeGrain": "PT1M",
+									"statistic": "Average",
+									"timeWindow": "PT5M",
+									"timeAggregation": "Average",
+									"operator": "GreaterThan",
+									"threshold": "[parameters('scaleInThreshold')]"
+								},
+								"scaleAction": {
+									"direction": "Decrease",
+									"type": "ChangeCount",
+									"value": "[parameters('scaleInAction')]",
+									"cooldown": "PT5M"
+								}
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}
