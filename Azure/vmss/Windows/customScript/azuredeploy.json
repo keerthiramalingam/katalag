@@ -15,7 +15,7 @@
 
 		"bootstrapTemplateBaseURL": {
 			"type": "string",
-			"defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/vmss/Windows/"
+			"defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/vmss/Windows/customScript/"
 		},
 
 		"bootstrapScriptName": {
@@ -25,7 +25,7 @@
 
 		"customTemplateBaseURL": {
 			"type": "string",
-			"defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/vmss/Windows/"
+			"defaultValue": "https://raw.githubusercontent.com/keerthiramalingam/katalag/master/Azure/vmss/Windows/customScript/"
 		},
 
 		"customScriptName": {
@@ -392,15 +392,15 @@
 						"extensions": [{
 								"name": "bootstrap",
 								"properties": {
-									"publisher": "Microsoft.Azure.Extensions",
+									"publisher": "Microsoft.Compute",
 									"type": "CustomScriptExtension",
-									"typeHandlerVersion": "2.0",
+									"typeHandlerVersion": "1.8",
 									"autoUpgradeMinorVersion": true,
 									"settings": {
 										"fileUris": [
 											"[variables('BootStrapScriptLink')]"
 										],
-										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'), '-parm ')]"
+										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'), '-parm ', variables('CustomScriptLink'), '-parm1 asdasd -parm2 asdasdas')]"
 									}
 								}
               }, 
