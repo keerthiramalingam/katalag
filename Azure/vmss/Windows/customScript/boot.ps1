@@ -5,9 +5,9 @@ param (
     [string]$vmss = ""
  )
 
- Add-Content C:\tst\output.txt "$(Get-Date) $pp_region XXXXX $pp_environment XXXXX $pp_role and $vmss"
+New-Item -ItemType directory -Path C:\tst
 
-
+Add-Content C:\tst\output.txt "$(Get-Date) $pp_region XXXXX $pp_environment XXXXX $pp_role and $vmss"
 
 $onlyScriptURI = $vmss.Split(" ")[0]
 $onlyFileName = $onlyScriptURI.Split("\/")[-1]
