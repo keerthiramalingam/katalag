@@ -8,10 +8,10 @@ param (
  Add-Content C:\tst\output.txt "$(Get-Date) $pp_region XXXXX $pp_environment XXXXX $pp_role and $vmss"
 
 
-$parm = "http://google.com/asdasd/etrtrtir/jjglgle.ps1  -parm1 qwqwe -parm2 23232"
+
 $onlyScriptURI = $vmss.Split(" ")[0]
 $onlyFileName = $onlyScriptURI.Split("\/")[-1]
 $localScriptLocation = "C:\tst\" + $onlyFileName
 
 Invoke-WebRequest -Uri $onlyScriptURI -OutFile $localScriptLocation
-Invoke-Expression $localScriptLocation $parm.Split(" ")[1..($parm.Split(" ").Length)]
+Invoke-Expression $localScriptLocation $vmss.Split(" ")[1..($vmss.Split(" ").Length)]
