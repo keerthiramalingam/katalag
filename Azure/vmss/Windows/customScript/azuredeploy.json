@@ -349,8 +349,7 @@
 		"CustomScriptName": "[parameters('customScriptName')]",
 		"CustomScriptLink": "[concat(variables('customTemplateBaseURL'), variables('customScriptName'))]",
 
-		"publicIPAddressName": "kitvmss-pip",
-		"publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
+		"publicIPAddressName": "kitvmss-pip"
 	},
 	"resources": [
 		{
@@ -381,7 +380,7 @@
 						{
 							"publicIPAddress":
 							{
-								"id": "[variables('publicIPAddressID')]"
+								"id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
 							}
 						}
 					}
