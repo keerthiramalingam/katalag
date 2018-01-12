@@ -10,7 +10,8 @@ Param(
   [parameter(Mandatory=$true,Position=3)] 
   [string]$pp_role,
   [parameter(Mandatory=$true,Position=4)] 
-  [string]$diskmounts
+  [string]$diskmounts,
+  [string]$vmss = ""
 )
 
 $computerName = $env:computername
@@ -33,6 +34,14 @@ $puppet_agent_location = "C:\Windows\Temp\puppet-agent-1.6.1-x64.msi"
 # Logging install process
 md C:\ProvisioningLogs
 Start-Transcript -Path $logfile 
+
+# Update AD DNS Name
+$ad_username = "zz_awcoreauto@uk.centricaplc.com"
+$ad_password = "KXRgQXpX@#vr2lZO2O"
+$secureStringPwd = ($ad_password | ConvertTo-SecureString -AsPlainText -Force)
+$creds = (New-Object System.Management.Automation.PSCredential -ArgumentList $ad_username, $secureStringPwd)
+$ad_command = (Set-ADComputer -Identity $computerName -DNSHostName "$computerName.$DNSSuffix" -Credential $creds)
+$ad_command
 
 # Set Time Zone to Europe\London
 tzutil /s "GMT Standard Time"
@@ -124,15 +133,14 @@ Start-Sleep -s 30
 # Install software so we can update AD DNSHostname attribute
 Add-WindowsFeature RSAT-AD-PowerShell
 
-# Update AD DNS Name
-$ad_username = "zz_awcoreauto@uk.centricaplc.com"
-$ad_password = "KXRgQXpX@#vr2lZO2O"
-$secureStringPwd = ($ad_password | ConvertTo-SecureString -AsPlainText -Force)
-$creds = (New-Object System.Management.Automation.PSCredential -ArgumentList $ad_username, $secureStringPwd)
-$ad_command = (Set-ADComputer -Identity $computerName -DNSHostName "$computerName.$DNSSuffix" -Credential $creds)
-$ad_command
-
 #gpupdate /force
+
+$onlyScriptURI = $vmss.Split(" ")[0]
+$onlyFileName = $onlyScriptURI.Split("\/")[-1]
+$localScriptLocation = "C:\Windows\Temp\" + $onlyFileName
+
+Invoke-WebRequest -Uri $onlyScriptURI -OutFile $localScriptLocation
+Invoke-Expression $localScriptLocation $vmss.Split(" ")[1..($vmss.Split(" ").Length)]
 
 # Restart server and exit
 shutdown /r /t 30
