@@ -400,7 +400,7 @@
 										"fileUris": [
 											"[variables('BootStrapScriptLink')]"
 										],
-										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'))]"
+										"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ',variables('BootStrapScriptName'),' -pp_region ',variables('SelectedRegion'),' -pp_environment ',variables('SelectedEnvironment'),' -pp_role ',variables('PProle'), '-parm ')]"
 									}
 								}
               }, 
@@ -421,20 +421,6 @@
 									"protectedsettings": {
 										"Password": "[variables('DomainPassword')]"
 									}
-								}
-							}, {
-								"name": "customScript",
-								"properties": {
-									"publisher": "Microsoft.Azure.Extensions",
-									"type": "CustomScriptExtension",
-									"typeHandlerVersion": "2.0",
-									"autoUpgradeMinorVersion": true,
-									"settings": {
-										"fileUris": [
-											"[variables('CustomScriptLink')]"
-                    ],
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('CustomScriptName'))]"
-									}									
 								}
 							}
 						]
