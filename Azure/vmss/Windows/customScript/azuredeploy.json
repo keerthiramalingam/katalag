@@ -414,7 +414,7 @@
 			"location": "[resourceGroup().location]",
 			"apiVersion": "2017-03-30",
 			"dependsOn": [
-				"[resourceId('Microsoft.Network/loadBalancers', variables('LoadBalancerName'))]"
+				"[concat('Microsoft.Network/loadBalancers', variables('LoadBalancerName'))]"
 			],
 			"sku":
 			{
