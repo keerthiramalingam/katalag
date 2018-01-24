@@ -1,204 +1,190 @@
-{  
-   "$schema":"http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-   "contentVersion":"1.0.0.0",
-   "parameters":{  
-      "newLabName":{  
-         "type":"string",
-         "metadata":{  
-            "description":"The name of the new lab instance to be created."
-         }
-      },
-      "newLabVirtualNetworkName":{  
-         "type":"string",
-         "metadata":{  
-            "description":"The name of the new lab virtual network instance to be created with the new lab instance being created."
-         }
-      },
-      "existingVirtualNetworkId":{  
-         "type":"string",
-         "metadata":{  
-            "description":"The resource ID pointing to an existing (compute) virtual network to be referenced by the new lab virtual network instance being created."
-         }
-      },
-      "existingSubnetName":{  
-         "type":"string",
-         "defaultValue":"default",
-         "metadata":{  
-            "description":"The name of an existing (compute) subnet instance to be configured for Lab VM creation."
-         }
-      },
-	    
-	  "artifactRepositoryDisplayName": {
-      "type": "string",
-      "defaultValue": "Repository"
-    },
-    "artifactRepoUri": {
-      "type": "string"
-    },
-    "artifactRepoBranch": {
-      "type": "string",
-      "defaultValue": "master"
-    },
-    "artifactRepoFolder": {
-      "type": "string",
-      "defaultValue": "Artifacts/"
-    },
-    "artifactRepoType": {
-      "type": "string",
-      "allowedValues": [ "VsoGit", "GitHub" ]
-    },
-    "artifactRepoSecurityToken": {
-      "type": "securestring"
-    },
-	
-	"costThreshold": {
-      "value": "50000"
-    },
-	 "labVmShutDownTime": {
-            "type": "string"
-        },
-        "labVmShutDownURL": {
-            "type": "string"
-        }
-	
-	
-	
-	
-   },
-   "variables":{  
-      "existingSubnetId":"[concat(parameters('existingVirtualNetworkId'), '/subnets/', parameters('existingSubnetName'))]"
-   },
-   "resources":[  
-      {  
-         "apiVersion":"2017-04-26-preview",
-         "type":"Microsoft.DevTestLab/labs",
-         "name":"[parameters('newLabName')]",
-         "location":"[resourceGroup().location]",
-         "resources":[  
-            {  
-               "apiVersion":"2017-04-26-preview",
-               "name":"[parameters('newLabVirtualNetworkName')]",
-               "type":"virtualNetworks",
-               "dependsOn":[  
-                  "[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
-               ],
-               "properties":{  
-                  "description":"Existing Compute virtual network associated as part of the lab creation process.",
-                  "externalProviderResourceId":"[parameters('existingVirtualNetworkId')]",
-                  "subnetOverrides":[  
-                     {  
-                        "name":"[parameters('existingSubnetName')]",
-                        "resourceId":"[variables('existingSubnetId')]",
-                        "useInVmCreationPermission":"Allow",
-                        "usePublicIpAddressPermission":"Deny"
-                     }
-                  ]
-               }
-            },
-			
+
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters":
+	{
+		"newLabName":
+		{
+			"type": "string",
+			"defaultValue": "TestDev",
+			"metadata":
 			{
-          "apiVersion": "2017-04-26-preview",
-          "name": "[variables('artifactRepositoryName')]",
-          "type": "artifactSources",
-          "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
-          ],
-          "properties": {
-            "uri": "[parameters('artifactRepoUri')]",
-            "folderPath": "[parameters('artifactRepoFolder')]",
-            "branchRef": "[parameters('artifactRepoBranch')]",
-            "displayName": "[parameters('artifactRepositoryDisplayName')]",
-            "securityToken": "[parameters('artifactRepoSecurityToken')]",
-            "sourceType": "[parameters('artifactRepoType')]",
-            "status": "Enabled"
-          }
-        },
-		
+				"description": "The name of the new lab instance to be created."
+			}
+		},
+		"newLabVirtualNetworkName":
 		{
-          "apiVersion": "2017-04-26-preview",
-          "name": "targetCost",
-          "type": "costs",
-          "properties": {
-            "targetCost": {
-              "cycleType": "CalendarMonth",
-              "status": "Enabled",
-              "target": "[parameters('costThreshold')]",
-              "costThresholds": [
-                {
-                  "thresholdId": "96c08eae-885f-4a46-a15d-9dc991a32cbf",
-                  "thresholdStatus": "Disabled",
-                  "displayOnChart": "Enabled",
-                  "sendNotificationWhenExceeded": "Disabled",
-                  "percentageThreshold": { "thresholdValue": 75 }
-                },
-                {
-                  "thresholdId": "5ef03748-2e10-4b3c-afc2-cc766abf2d5d",
-                  "thresholdStatus": "Disabled",
-                  "displayOnChart": "Enabled",
-                  "sendNotificationWhenExceeded": "Enabled",
-                  "percentageThreshold": { "thresholdValue": 100 }
-                },
-                {
-                  "thresholdId": "b0bf180e-2e09-4073-8040-56e8a23dcd84",
-                  "thresholdStatus": "Disabled",
-                  "displayOnChart": "Disabled",
-                  "sendNotificationWhenExceeded": "Disabled",
-                  "percentageThreshold": { "thresholdValue": 125 }
-                }
-              ]
-            }
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
-          ]
-        },
-		
-		 {
-                    "apiVersion": "2017-04-26-preview",
-                    "name": "LabVmsShutdown",
-                    "type": "schedules",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
-                    ],
-                    "properties": {
-                        "status": "Enabled",
-                        "timeZoneId": "Central Standard Time",
-                        "dailyRecurrence": {
-                            "time": "[replace(parameters('labVmShutDownTime'),':','')]"
-                        },
-                        "taskType": "LabVmsShutdownTask",
-                        "notificationSettings": {
-                            "status": "Enabled",
-                            "timeInMinutes": 15
-                        }
-                    }
-                },
+			"type": "string",
+			"defaultValue": "NewDevVNET",
+			"metadata":
+			{
+				"description": "The name of the new lab virtual network instance to be created with the new lab instance being created."
+			}
+		},
+		"existingVirtualNetworkId":
 		{
-                    "apiVersion": "2017-04-26-preview",
-                    "name": "AutoShutdown",
-                    "type": "notificationChannels",
-                    "properties": {
-                        "description": "This option will send notifications to the specified webhook URL before auto-shutdown of virtual machines occurs.",
-                        "events": [
-                            {
-                                "eventName": "Autoshutdown"
-                            }
-                        ],
-                        "webHookUrl": "[parameters('labVmShutDownURL')]"
-                    },
-                    "dependsOn": [
-                        "[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
-                    ]
-                }
-		
-		
-         ]
-      }
-   ],
-   "outputs":{  
-      "labId":{  
-         "type":"string",
-         "value":"[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
-      }
-   }
+      "type": "string",
+      "defaultValue": "DtlTestLab",
+			"metadata":
+			{
+				"description": "The resource ID pointing to an existing (compute) virtual network to be referenced by the new lab virtual network instance being created."
+			}
+		},
+		"existingSubnetName":
+		{
+			"type": "string",
+			"defaultValue": "DtlTestLabSubnet",
+			"metadata":
+			{
+				"description": "The name of an existing (compute) subnet instance to be configured for Lab VM creation."
+			}
+		},
+		"costThreshold":
+		{
+			"value": "50000"
+		},
+		"labVmShutDownTime":
+		{
+			"type": "string"
+		},
+		"labVmShutDownURL":
+		{
+			"type": "string"
+		}
+	},
+	"variables":
+	{
+		"existingSubnetId": "[concat(parameters('existingVirtualNetworkId'), '/subnets/', parameters('existingSubnetName'))]"
+	},
+	"resources": [
+		{
+			"apiVersion": "2017-04-26-preview",
+			"type": "Microsoft.DevTestLab/labs",
+			"name": "[parameters('newLabName')]",
+			"location": "[resourceGroup().location]",
+			"resources": [
+				{
+					"apiVersion": "2017-04-26-preview",
+					"name": "[parameters('newLabVirtualNetworkName')]",
+					"type": "virtualNetworks",
+					"dependsOn": [
+						"[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
+					],
+					"properties":
+					{
+						"description": "Existing Compute virtual network associated as part of the lab creation process.",
+						"externalProviderResourceId": "[parameters('existingVirtualNetworkId')]",
+						"subnetOverrides": [
+							{
+								"name": "[parameters('existingSubnetName')]",
+								"resourceId": "[variables('existingSubnetId')]",
+								"useInVmCreationPermission": "Allow",
+								"usePublicIpAddressPermission": "Deny"
+							}
+						]
+					}
+				},
+				{
+					"apiVersion": "2017-04-26-preview",
+					"name": "targetCost",
+					"type": "costs",
+					"properties":
+					{
+						"targetCost":
+						{
+							"cycleType": "CalendarMonth",
+							"status": "Enabled",
+							"target": "[parameters('costThreshold')]",
+							"costThresholds": [
+								{
+									"thresholdId": "96c08eae-885f-4a46-a15d-9dc991a32cbf",
+									"thresholdStatus": "Disabled",
+									"displayOnChart": "Enabled",
+									"sendNotificationWhenExceeded": "Disabled",
+									"percentageThreshold":
+									{
+										"thresholdValue": 75
+									}
+								},
+								{
+									"thresholdId": "5ef03748-2e10-4b3c-afc2-cc766abf2d5d",
+									"thresholdStatus": "Disabled",
+									"displayOnChart": "Enabled",
+									"sendNotificationWhenExceeded": "Enabled",
+									"percentageThreshold":
+									{
+										"thresholdValue": 100
+									}
+								},
+								{
+									"thresholdId": "b0bf180e-2e09-4073-8040-56e8a23dcd84",
+									"thresholdStatus": "Disabled",
+									"displayOnChart": "Disabled",
+									"sendNotificationWhenExceeded": "Disabled",
+									"percentageThreshold":
+									{
+										"thresholdValue": 125
+									}
+								}
+							]
+						}
+					},
+					"dependsOn": [
+						"[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
+					]
+				},
+
+				{
+					"apiVersion": "2017-04-26-preview",
+					"name": "LabVmsShutdown",
+					"type": "schedules",
+					"dependsOn": [
+						"[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
+					],
+					"properties":
+					{
+						"status": "Enabled",
+						"timeZoneId": "Central Standard Time",
+						"dailyRecurrence":
+						{
+							"time": "[replace(parameters('labVmShutDownTime'),':','')]"
+						},
+						"taskType": "LabVmsShutdownTask",
+						"notificationSettings":
+						{
+							"status": "Enabled",
+							"timeInMinutes": 15
+						}
+					}
+				},
+				{
+					"apiVersion": "2017-04-26-preview",
+					"name": "AutoShutdown",
+					"type": "notificationChannels",
+					"properties":
+					{
+						"description": "This option will send notifications to the specified webhook URL before auto-shutdown of virtual machines occurs.",
+						"events": [
+							{
+								"eventName": "Autoshutdown"
+							}
+						],
+						"webHookUrl": "[parameters('labVmShutDownURL')]"
+					},
+					"dependsOn": [
+						"[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
+					]
+				}
+			]
+		}
+	],
+	"outputs":
+	{
+		"labId":
+		{
+			"type": "string",
+			"value": "[resourceId('Microsoft.DevTestLab/labs', parameters('newLabName'))]"
+		}
+	}
 }

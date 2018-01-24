@@ -2,7 +2,80 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      
+
+      "subscriptionId": {
+        "type": "string",
+        "defaultValue": ""
+      },
+
+      "dnsServers": {
+        "type": "array",
+        "defaultValue": ["10.64.192.4", "10.64.192.5"]
+      },
+
+      "tagValues": {
+        "type": "object",
+        "defaultValue": {
+          "Cost code ID": "[resourceGroup().tags['Cost code ID']]"
+        }
+      },
+
+      "tagValuesVM": {
+        "type": "object",
+        "defaultValue": {
+          "Cost code ID": "[resourceGroup().tags['Cost code ID']]"
+        }
+      },
+
+      "bootstrapScriptName": {
+        "type": "string",
+        "defaultValue": "azure_windows_BootstrapGeneric_25082017.ps1"
+      },
+
+      "bootstrapScriptNameLinux": {
+        "type": "string",
+        "defaultValue": "bootstrap-azure-linux-instances.sh"
+      },
+
+      "domainToJoin": {
+        "type": "string",
+        "defaultValue": "uk.centricaplc.com"
+      },
+
+      "domainJoinOptions": {
+        "type": "int",
+        "defaultValue": 3
+      },
+
+      "ouPath": {
+        "type": "string",
+        "defaultValue": "OU=V2-test,OU=Core,OU=Servers,OU=BG,OU=SPD-Azure,DC=uk,DC=centricaplc,DC=com"
+      },
+
+      "domainUsername": {
+        "type": "string",
+        "defaultValue": "zz_awcoreauto"
+      },
+
+      "domainPassword": {
+        "type": "securestring"
+      },
+
+      "selectedregion": { 
+        "type": "string",             
+        "defaultValue": "uksouth" 
+      },
+
+      "selectedenvironment": { 
+          "type": "string",             
+          "defaultValue": "dev-1" 
+      },
+
+      "pprole": { 
+          "type": "string",             
+          "defaultValue": "undefined" 
+        },
+
       "operatingSystemPublisher": {
         "type": "string",
         "defaultValue": "MicrosoftWindowsServer",

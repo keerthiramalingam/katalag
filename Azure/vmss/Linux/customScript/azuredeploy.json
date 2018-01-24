@@ -20,7 +20,12 @@
 
 		"bootstrapScriptName": {
 			"type": "string",
-			"defaultValue": "boot.ps1"
+			"defaultValue": "bootstrap-azure-linux-instances.sh"
+		},
+
+		"bootstrapCommand": {
+			"type": "string",
+			"defaultValue": "[concat('wget -O /root/bootstrap-azure-linux-instances.sh -e \"https_proxy=proxy-azsu.azure.uk.centricaplc.com:8080\" https://bgautomation.blob.core.windows.net/scripts/',parameters('bootstrapScriptName'),' && chmod 755 /root/bootstrap-azure-linux-instances.sh && sh /root/bootstrap-azure-linux-instances.sh ',parameters('selectedenvironment'),' ',parameters('pprole'),' ',parameters('selectedregion'),' ',parameters('diskmounts'),' && exit 0')]", 
 		},
 
 		"customTemplateBaseURL": {
